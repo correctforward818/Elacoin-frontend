@@ -10,7 +10,7 @@ const BoilingVerdict = (props) => {
     }
 
 
-    
+
 }
 
 
@@ -47,6 +47,8 @@ const Calculator = () => {
             <BoilingVerdict 
                 celsius={parseFloat(celsiusTemperature)}
             />
+
+            <WelcomeDialog />
         </div>
     );
 }
@@ -118,9 +120,31 @@ const Blog = (props) => {
     );
 }
 
+const FancyBorder = (props) => {
+    return (
+        <div className={'FancyBorder + FancyBorder-' + props.color}>
+            {props.children}
+        </div>
+    );
+}
+
+const WelcomeDialog = () => {
+    return (
+        <FancyBorder color="blue">
+            <h1 className='Dialog-title'>
+                Welcome
+            </h1>
+            <p>
+                Thank you.
+            </p>
+        </FancyBorder>
+    );
+}
+
 const posts = [
     {id: 1, title: "Hello world!", content: "Welcome to learning React!" },
     {id: 2, title: "Installation", content: "You can install React from npm"}
 ]
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<Calculator />);
