@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { Fragment, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 
 const BoilingVerdict = (props) => {
@@ -29,6 +29,7 @@ const Calculator = () => {
 
     const celsiusTemperature = scale === 'f' ? tryConverter(temperature, toCelsius) : temperature;
     const fahrenheitTemperature = scale === 'c' ? tryConverter(temperature, toFahrenheit) : temperature;
+    const ref = React.createRef();
 
     return (
         <div>
@@ -49,6 +50,16 @@ const Calculator = () => {
             />
 
             <WelcomeDialog />
+
+            <OuterClickExample />
+
+            <Test />
+
+            <FancyButton ref={ref}>Click me!</FancyButton>
+
+            <TestButton />
+
+            <HookExample />
         </div>
     );
 }
@@ -138,6 +149,119 @@ const WelcomeDialog = () => {
                 Thank you.
             </p>
         </FancyBorder>
+    );
+}
+
+const ListItem = (item) => {
+    return(
+        <Fragment>
+            <dt>{item.term}</dt>
+            <dd>{item.description}</dd>
+        </Fragment>
+    );
+}
+
+
+const Glossary = (props) => {
+    return(
+      <dl>
+        {props.items.map(item => (
+            <ListItem item={item} key={item.id} />
+        ))}
+      </dl>  
+    );
+}
+
+const OuterClickExample = () => {
+    const [isOpen, setIsOpen] = useState(false);
+    const toggleContainer = useRef(null);
+    
+    const onClickHandler = () => {
+        setIsOpen(prevState => !prevState);
+    }
+
+    const onClickOutsideHandler = (e) => {
+        if (isOpen && toggleContainer.current && !toggleContainer.current.contains(e.target)) {
+            setIsOpen(false);
+        }
+    } 
+
+    useEffect(() => {
+        window.addEventListener('click', onClickOutsideHandler);
+        return () => {
+            window.removeEventListener('click', onClickOutsideHandler);
+        };
+    }, [isOpen]);
+
+    return (
+        <div ref={toggleContainer}>
+            <button onClick={onClickHandler}>Select an Option</button>
+            {isOpen && (
+                <ul>
+                    <li>Option 1</li>
+                    <li>Option 2</li>
+                    <li>Option 3</li>
+                </ul>
+            )}
+        </div>
+    );
+};
+
+const ThemeContext = React.createContext('light');
+
+const Test = () => {
+    return (
+        <ThemeContext.Provider value='dark'>
+            <ToolBar />
+        </ThemeContext.Provider>
+    );
+}
+
+const ToolBar = () => {
+    return (
+        <div>
+            <ThemeButton />
+        </div>
+    );
+}
+
+const ThemeButton = () => {
+    const theme = useContext(ThemeContext);
+    return <button theme={theme} />
+}
+
+const FancyButton = React.forwardRef((props, ref) => {
+    <button ref={ref} className='FancyButton'>
+        {props.children}But note that the USP of this is no longer what we set out it would be.
+    </button>
+});
+
+const Button = (props) => {
+    const {kind, ...other} = props;
+    const className = 'primary' ? "PrimaryButton" : "SecondaryButton";
+    return <button className='className' {...other} />
+}
+
+const TestButton = (props) => {
+    return (
+        <div>
+            <Button kind="primary" onClick={() => console.log('clicked')} />
+        </div>
+    );
+}
+
+const HookExample = () => {
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+        document.title = `You clicked ${count} times`;
+    })
+
+    return (
+        <div>
+            <p>You clicked {count} times</p>
+            <button onClick={() => setCount(count + 1)}>Click me</button>
+        </div>
     );
 }
 
